@@ -35,6 +35,9 @@
    - 跟隨安裝指南完成 Ubuntu 的安裝。在安裝過程中，您可以選擇語言、時間、鍵盤布局、安裝類型（通常選擇標準安裝），以及創建用戶帳戶等。
    - 安裝完成後重啟虛擬機。
 
+> [!TIP]
+> 接下來的步驟可以使用 [**../scripts/setup.sh**](../scripts/setup.sh) 來完成
+
 ## Install Compiled Tools
 
 ```bash
@@ -115,7 +118,7 @@ for arg in sys.argv:
 還原前面註解掉的 `from gem5_scons import Transform`
 
 ```bash
-cd NVmain
+cd ~/NVmain
 vim SConscript
 ```
 
@@ -123,7 +126,7 @@ vim SConscript
 from gem5_scons import Transform
 ```
 
-最後，在 `gem5` 的根目錄下混合NVMAIN編譯GEM5
+最後，在 `gem5` 的根目錄下混合 NVMAIN 編譯 GEM5
 
 ```bash
 scons EXTRAS=../NVmain build/X86/gem5.opt
@@ -133,4 +136,25 @@ scons EXTRAS=../NVmain build/X86/gem5.opt
 
 ```bash
 ./build/X86/gem5.opt configs/example/se.py -c tests/test-progs/hello/bin/x86/linux/hello --cpu-type=TimingSimpleCPU --caches --l2cache --mem-type=NVMainMemory --nvmain-config=../NVmain/Config/PCM_ISSCC_2012_4GB.config
+```
+
+輸出中看到 `Hello world!`，代表成功執行：
+   
+```bash
+...
+117 NVMain: the address mapping order is
+118     Sub-Array 1
+119     Row 6
+120     Column 2
+121     Bank 4
+122     Rank 5
+123     Channel 3
+124 defaultMemory.channel0.FRFCFS-WQF capacity is 4096 MB.
+125 Creating 4 command queues.
+126 **** REAL SIMULATION ****
+127 Hello world!                
+128 Exiting @ tick 77407500 because exiting with last active thread context
+129 i0.defaultMemory.channel0.FRFCFS-WQF.channel0.rank0.bank0.subarray0.subArrayEnergy 4.33674nJ
+130 i0.defaultMemory.channel0.FRFCFS-WQF.channel0.rank0.bank0.subarray0.activeEnergy 4.1412nJ
+...
 ```

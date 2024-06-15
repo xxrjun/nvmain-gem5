@@ -1,6 +1,6 @@
-# LLC OptimaSim
+# NVMain + Gem5
 
-- [LLC OptimaSim](#llc-optimasim)
+- [NVMain + Gem5](#nvmain--gem5)
   - [Environment Setup](#environment-setup)
   - [Grading Policy](#grading-policy)
   - [References](#references)

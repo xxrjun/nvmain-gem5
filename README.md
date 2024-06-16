@@ -2,11 +2,12 @@
 
 - [NVMain + Gem5](#nvmain--gem5)
   - [Grading Policy](#grading-policy)
-  - [Tasks Implementation](#tasks-implementation)
+  - [Task Implementations](#task-implementations)
     - [Task 1: Build GEM5 + NVMain](#task-1-build-gem5--nvmain)
     - [Task 2: Enable L3 last level cache in GEM5 + NVMain](#task-2-enable-l3-last-level-cache-in-gem5--nvmain)
     - [Task 3: Config last level cache to 2-way and full-way associative cache and test performance](#task-3-config-last-level-cache-to-2-way-and-full-way-associative-cache-and-test-performance)
     - [Task 4: Modify last level cache policy based on frequency based replacement policy](#task-4-modify-last-level-cache-policy-based-on-frequency-based-replacement-policy)
+    - [Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc\_pcm](#task-5-test-the-performance-of-write-back-and-write-through-policy-based-on-4-way-associative-cache-with-isscc_pcm)
   - [References](#references)
 
 ## Grading Policy
@@ -16,11 +17,11 @@
 | GEM5 + NVMAIN BUILD-UP                                                                                      |    40%     | 參照投影片教學                                                                                           |   ✅    |
 | Enable L3 last level cache in GEM5 + NVMAIN                                                                 |    15%     | -                                                                                                        |   ✅    |
 | Config last level cache to 2-way and full-way associative cache and test performance                        |    15%     | 必須跑 benchmark quicksort 在 2-way 跟 full way                                                          |   ✅    |
-| Modify last level cache policy based on frequency based replacement policy                                  |    15%     | -                                                                                                        | Pending |
+| Modify last level cache policy based on frequency based replacement policy                                  |    15%     | -                                                                                                        | ✅ |
 | Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm |    15%     | 必須跑 benchmark multiply 在 write through 跟 write back                                                 | Pending |
 | Bonus                                                                                                       |    10%     | Design last level cache policy to reduce the energy consumption of pcm_based main memory (Baseline: LRU) | Pending |
 
-## Tasks Implementation
+## Task Implementations
 
 ### Task 1: Build GEM5 + NVMain
 
@@ -190,6 +191,12 @@ Reference: [Replacement Policies](https://www.gem5.org/documentation/general_doc
 
 > [!TIP]
 > Refer to [gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py](gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py)
+
+### Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm
+
+> Run benchmark multiply in write through and write back policy. (In GEM5, the default policy is write back, we can judge the policy by the number of write requests.)
+
+> [`gem5/src/mem/cache/base.cc`](gem5/src/mem/cache/base.cc) and [`gem5/src/mem/cache/cache.cc`](gem5/src/mem/cache/cache.cc) are the files that define the cache policy.
 
 ## References
 

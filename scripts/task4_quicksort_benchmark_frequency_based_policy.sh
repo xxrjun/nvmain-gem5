@@ -11,6 +11,7 @@ L1d_SIZE=32kB
 L2_SIZE=128kB
 L3_SIZE=1MB
 MEM_TYPE=NVMainMemory
+L3_REPLACEMENT_POLICY=LFU
 
 # Compile quicksort
 gcc --static $QUICKSORT_FILE -o $QUICKSORT_BINARY
@@ -26,16 +27,16 @@ cmd="./build/X86/gem5.opt $CONFIG_SCRIPT \
         --caches \
         --l1d_size=$L1d_SIZE --l1i_size=$L1i_SIZE \
         --l2cache --l2_size=$L2_SIZE \
-        --l3cache --l3_size=$L3_SIZE --l3_assoc=2 \
+        --l3cache  --l3_size=$L3_SIZE --l3_assoc=2 --l3_replacement_policy=$L3_REPLACEMENT_POLICY \
         --mem-type=$MEM_TYPE \
         --nvmain-config=$NVMAIN_CONFIG
     "
-mkdir -p ../out/quicksort-2-way
-eval $cmd > ../out/quicksort-2-way/log.txt
+mkdir -p ../out/quicksort-2-way-LFU
+eval $cmd > ../out/quicksort-2-way-LFU/log.txt
 # Store 2-way commands, config, and stats
-echo $cmd > ../out/quicksort-2-way/cmd.txt
-mv m5out/stats.txt ../out/quicksort-2-way/stats.txt
-mv m5out/config.ini ../out/quicksort-2-way/config.ini
+echo $cmd > ../out/quicksort-2-way-LFU/cmd.txt
+mv m5out/stats.txt ../out/quicksort-2-way-LFU/stats.txt
+mv m5out/config.ini ../out/quicksort-2-way-LFU/config.ini
 
 # ==============================================================
 # Full-way associative
@@ -46,20 +47,20 @@ cmd="./build/X86/gem5.opt $CONFIG_SCRIPT \
         --caches \
         --l1d_size=$L1d_SIZE --l1i_size=$L1i_SIZE \
         --l2cache --l2_size=$L2_SIZE \
-        --l3cache --l3_size=$L3_SIZE --l3_assoc=16 \
+        --l3cache --l3_size=$L3_SIZE --l3_assoc=16 --l3_replacement_policy=$L3_REPLACEMENT_POLICY \
         --mem-type=$MEM_TYPE \
         --nvmain-config=$NVMAIN_CONFIG
     "
-mkdir -p ../out/quicksort-full-way
-eval $cmd > ../out/quicksort-full-way/log.txt
-echo $cmd > ../out/quicksort-full-way/cmd.txt
-mv m5out/stats.txt ../out/quicksort-full-way/stats.txt
-mv m5out/config.ini ../out/quicksort-full-way/config.ini
+mkdir -p ../out/quicksort-full-way-LFU
+eval $cmd > ../out/quicksort-full-way-LFU/log.txt
+echo $cmd > ../out/quicksort-full-way-LFU/cmd.txt
+mv m5out/stats.txt ../out/quicksort-full-way-LFU/stats.txt
+mv m5out/config.ini ../out/quicksort-full-way-LFU/config.ini
 
 
 # ==============================================================
 echo "Results for 2-way associative cache:"
-grep -e "sim_seconds" -e "sim_ticks" -e "system.l3.overall_hits::total" -e "system.l3.overall_misses::total" -e "system.l3.overall_miss_rate::total" ../out/quicksort-2-way/stats.txt
+grep -e "sim_seconds" -e "sim_ticks" -e "system.l3.overall_hits::total" -e "system.l3.overall_misses::total" -e "system.l3.overall_miss_rate::total" ../out/quicksort-2-way-LFU/stats.txt
 
 echo "Results for full-way associative cache:"
-grep -e "sim_seconds" -e "sim_ticks" -e "system.l3.overall_hits::total" -e "system.l3.overall_misses::total" -e "system.l3.overall_miss_rate::total" ../out/quicksort-full-way/stats.txt
+grep -e "sim_seconds" -e "sim_ticks" -e "system.l3.overall_hits::total" -e "system.l3.overall_misses::total" -e "system.l3.overall_miss_rate::total" ../out/quicksort-full-way-LFU/stats.txt

@@ -89,7 +89,13 @@ def config_cache(options, system):
                             assoc=options.l2_assoc)
         system.l3 = l3_cache_class(clk_domain=system.cpu_clk_domain,
                             size=options.l3_size,
-                            assoc=options.l3_assoc)
+                            assoc=options.l3_assoc) 
+                            
+        # Task 4: Modify last level cache policy based on frequency based replacement policy
+        if options.l3_replacement_policy == "LFU":
+            system.l3.replacement_policy = LFURP()
+        else:
+            system.l3.replacement_policy = LRURP() # default policy
 
         system.tol2bus = L2XBar(clk_domain = system.cpu_clk_domain)
         system.tol3bus = L3XBar(clk_domain = system.cpu_clk_domain)

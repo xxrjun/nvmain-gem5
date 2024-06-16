@@ -98,6 +98,7 @@ def addNoISAOptions(parser):
                       help="use external port for SystemC TLM cosimulation")
     parser.add_option("--caches", action="store_true")
     parser.add_option("--l2cache", action="store_true")
+    parser.add_option("--l3cache", action="store_true")
     parser.add_option("--num-dirs", type="int", default=1)
     parser.add_option("--num-l2caches", type="int", default=1)
     parser.add_option("--num-l3caches", type="int", default=1)
@@ -141,7 +142,7 @@ def addCommonOptions(parser):
     parser.add_option("--cpu-type", type="choice", default="AtomicSimpleCPU",
                       choices=CpuConfig.cpu_names(),
                       help = "type of cpu to run with")
-    parser.add_option("--checker", action="store_true");
+    parser.add_option("--checker", action="store_true")
     parser.add_option("--cpu-clock", action="store", type="string",
                       default='2GHz',
                       help="Clock for blocks running at CPU speed")

@@ -5,19 +5,20 @@
   - [Tasks Implementation](#tasks-implementation)
     - [Task 1: Build GEM5 + NVMain](#task-1-build-gem5--nvmain)
     - [Task 2: Enable L3 last level cache in GEM5 + NVMain](#task-2-enable-l3-last-level-cache-in-gem5--nvmain)
-    - [Task 3: Config last level cache to  2-way and full-way associative cache and test performance](#task-3-config-last-level-cache-to--2-way-and-full-way-associative-cache-and-test-performance)
+    - [Task 3: Config last level cache to 2-way and full-way associative cache and test performance](#task-3-config-last-level-cache-to-2-way-and-full-way-associative-cache-and-test-performance)
+    - [Task 4:](#task-4)
   - [References](#references)
 
 ## Grading Policy
 
-| Criteria                                                                                                    | :Percentage: | Details                                                                                                  | Status  |
------------------------------------------------------------------------------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------- | :-------: |
-| GEM5 + NVMAIN BUILD-UP                                                                                      | 40%        | 參照投影片教學                                                                                           | ✅ |
-| Enable L3 last level cache in GEM5 + NVMAIN                                                                 | 15%        | -                                                                                                        | Pending |
-| Config last level cache to 2-way and full-way associative cache and test performance                        | 15%        | 必須跑 benchmark quicksort 在 2-way跟 full way                                                             | Pending |
-| Modify last level cache policy based on frequency based replacement policy                                  | 15%        | -                                                                                                        | Pending |
-| Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm | 15%        | 必須跑 benchmark multiply 在 write through 跟 write back                                                  | Pending |
-| Bonus                                                                                                       | 10%        | Design last level cache policy to reduce the energy consumption of pcm_based main memory (Baseline: LRU) | Pending |
+| Criteria                                                                                                    | Percentage | Details                                                                                                  | Status  |
+| ----------------------------------------------------------------------------------------------------------- | :--------: | -------------------------------------------------------------------------------------------------------- | :-----: |
+| GEM5 + NVMAIN BUILD-UP                                                                                      |    40%     | 參照投影片教學                                                                                           |   ✅    |
+| Enable L3 last level cache in GEM5 + NVMAIN                                                                 |    15%     | -                                                                                                        |   ✅    |
+| Config last level cache to 2-way and full-way associative cache and test performance                        |    15%     | 必須跑 benchmark quicksort 在 2-way 跟 full way                                                          |   ✅    |
+| Modify last level cache policy based on frequency based replacement policy                                  |    15%     | -                                                                                                        | Pending |
+| Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm |    15%     | 必須跑 benchmark multiply 在 write through 跟 write back                                                 | Pending |
+| Bonus                                                                                                       |    10%     | Design last level cache policy to reduce the energy consumption of pcm_based main memory (Baseline: LRU) | Pending |
 
 ## Tasks Implementation
 
@@ -32,7 +33,7 @@ Follow the instructions in [Environment Setup](docs/EnvironmentSetup.md) to buil
 
 Reference
 
-- [gem5-stable添加l3 cache](https://blog.csdn.net/tristan_tian/article/details/79851063)
+- [gem5-stable 添加 l3 cache](https://blog.csdn.net/tristan_tian/article/details/79851063)
 - [Adding cache to the configuration script](https://www.gem5.org/documentation/learning_gem5/part1/cache_config/)
 
 Modify the following files in `gem5/`
@@ -68,10 +69,9 @@ class L3Cache(Cache):
 - **Targets per MSHR (tgts_per_mshr)**: Number of requests each MSHR can handle.
 - **Write Buffers**: Number of write buffers.
 
+#### `src/mem/Xbar.py`
 
-#### `src/mem/Xbar.py` 
-
-Add the  `L3XBar` class. This file is primarily used to define and configure memory crossbars in the GEM5 simulator. A crosssbar is crucial connection component used to tranfer data between different memory modules and processor cores.
+Add the `L3XBar` class. This file is primarily used to define and configure memory crossbars in the GEM5 simulator. A crosssbar is crucial connection component used to tranfer data between different memory modules and processor cores.
 
 ```python
 # We use a coherent crossbar to connect multiple masters to the L3
@@ -129,8 +129,8 @@ if options.cpu_type == "O3_ARM_v7a_3":
         O3_ARM_v7a_DCache, O3_ARM_v7a_ICache, O3_ARM_v7aL2, \
         O3_ARM_v7aWalkCache
 else:
-    # NOTE: Add L3 cache here 
-    dcache_class, icache_class, l2_cache_class, l3_cache_class, walk_cache_class = \ 
+    # NOTE: Add L3 cache here
+    dcache_class, icache_class, l2_cache_class, l3_cache_class, walk_cache_class = \
         L1_DCache, L1_ICache, L2Cache, L3Cache, None
 ```
 
@@ -151,10 +151,10 @@ if options.l3cache and options.l2cache: # L2 and L3
 
     system.tol2bus = L2XBar(clk_domain = system.cpu_clk_domain)
     system.tol3bus = L3XBar(clk_domain = system.cpu_clk_domain)
-    
+
     system.l2.cpu_side = system.tol2bus.master
     system.l2.mem_side = system.tol3bus.slave
-    
+
     system.l3.cpu_side = system.tol3bus.master
     system.l3.mem_side = system.membus.slave
 elif options.l2cache: # L2 but no L3
@@ -170,7 +170,16 @@ elif options.l2cache: # L2 but no L3
     system.l2.mem_side = system.membus.slave
 ```
 
-### Task 3: Config last level cache to  2-way and full-way associative cache and test performance
+### Task 3: Config last level cache to 2-way and full-way associative cache and test performance
+
+Download the benchmark file provided by TAs. Then execute the scripts [scripts/task3_quicksort_benchmark.sh](scripts/task3_quicksort_benchmark.sh) to run the benchmark.
+
+### Task 4:
+
+Reference: [Replacement Policies](https://www.gem5.org/documentation/general_docs/memory_system/replacement_policies/)
+
+> [!TIP]
+> Refer to [gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py](gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py)
 
 ## References
 

@@ -190,7 +190,24 @@ Download the benchmark file provided by TAs. Then execute the scripts [scripts/t
 Reference: [Replacement Policies](https://www.gem5.org/documentation/general_docs/memory_system/replacement_policies/)
 
 > [!TIP]
-> Refer to [gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py](gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py)
+> Refer to [gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py](gem5/src/mem/cache/replacement_policies/ReplacementPolicies.py) for all replacement policies.
+
+In this part, I modified two files
+
+- [gem5/configs/common/Options.py](gem5/configs/common/Options.py)
+
+    ```python
+    parser.add_option("--l3_replacement_policy", type="string", default="LRU")
+    ```
+- [gem5/configs/common/CacheConfig.py](gem5/configs/common/CacheConfig.py)
+
+    ```python
+    # Task 4: Modify last level cache policy based on frequency based replacement policy
+    if options.l3_replacement_policy == "LFU":
+        system.l3.replacement_policy = LFURP()
+    else:
+        system.l3.replacement_policy = LRURP() # default policy
+    ```
 
 ### Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm
 

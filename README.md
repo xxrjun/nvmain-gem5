@@ -6,7 +6,7 @@
     - [Task 1: Build GEM5 + NVMain](#task-1-build-gem5--nvmain)
     - [Task 2: Enable L3 last level cache in GEM5 + NVMain](#task-2-enable-l3-last-level-cache-in-gem5--nvmain)
     - [Task 3: Config last level cache to 2-way and full-way associative cache and test performance](#task-3-config-last-level-cache-to-2-way-and-full-way-associative-cache-and-test-performance)
-    - [Task 4:](#task-4)
+    - [Task 4: Modify last level cache policy based on frequency based replacement policy](#task-4-modify-last-level-cache-policy-based-on-frequency-based-replacement-policy)
   - [References](#references)
 
 ## Grading Policy
@@ -38,7 +38,9 @@ Reference
 
 Modify the following files in `gem5/`
 
-#### `configs/common/Options.py`
+#### `Options.py`
+
+> gem5/configs/common/Options.py
 
 Add the `--l3cache` option.
 
@@ -46,7 +48,9 @@ Add the `--l3cache` option.
 parser.add_option("--l3cache", action="store_true")
 ```
 
-#### `configs/common/Caches.py`
+#### `Caches.py`
+
+> gem5/configs/common/Caches.py
 
 Add the `L3Cache` class.
 
@@ -69,7 +73,9 @@ class L3Cache(Cache):
 - **Targets per MSHR (tgts_per_mshr)**: Number of requests each MSHR can handle.
 - **Write Buffers**: Number of write buffers.
 
-#### `src/mem/Xbar.py`
+#### `Xbar.py`
+
+> gem5/src/mem/Xbar.py
 
 Add the `L3XBar` class. This file is primarily used to define and configure memory crossbars in the GEM5 simulator. A crosssbar is crucial connection component used to tranfer data between different memory modules and processor cores.
 
@@ -98,7 +104,9 @@ class L3XBar(CoherentXBar):
     point_of_unification = True
 ```
 
-#### `src/cpu/BaseCPU.py`
+#### `BaseCPU.py`
+
+> gem5/src/cpu/BaseCPU.py
 
 ```python
 from XBar import L3XBar
@@ -113,7 +121,9 @@ def addThreeLevelCacheHierarchy(self, ic, dc, l2c, l3c, iwc=None, dwc=None,
     self._cached_ports = ['l3cache.mem_side']
 ```
 
-#### `configs/common/CacheConfig.py`
+#### `CacheConfig.py`
+
+> gem5/configs/common/CacheConfig.py
 
 Add L3 cache configuration.
 
@@ -174,7 +184,7 @@ elif options.l2cache: # L2 but no L3
 
 Download the benchmark file provided by TAs. Then execute the scripts [scripts/task3_quicksort_benchmark.sh](scripts/task3_quicksort_benchmark.sh) to run the benchmark.
 
-### Task 4:
+### Task 4: Modify last level cache policy based on frequency based replacement policy
 
 Reference: [Replacement Policies](https://www.gem5.org/documentation/general_docs/memory_system/replacement_policies/)
 

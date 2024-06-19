@@ -2,8 +2,8 @@ gem5 Simulator System.  http://gem5.org
 gem5 is copyrighted software; use the --copyright option for details.
 
 gem5 compiled Jun 16 2024 12:19:30
-gem5 started Jun 16 2024 21:04:51
-gem5 executing on rjun-ubuntu1804, pid 20091
+gem5 started Jun 19 2024 16:01:01
+gem5 executing on rjun-ubuntu1804, pid 9827
 command line: ./build/X86/gem5.opt configs/example/se.py -c ../benchmarks/quicksort --cpu-type=TimingSimpleCPU --caches --l1d_size=32kB --l1i_size=32kB --l2cache --l2_size=128kB --l3cache --l3_size=1MB --l3_assoc=2 --mem-type=NVMainMemory --nvmain-config=../NVmain/Config/PCM_ISSCC_2012_4GB.config
 
 Global frequency set at 1000000000000 ticks per second

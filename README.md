@@ -219,3 +219,4 @@ In this part, I modified two files
 
 - Final project_Ch.pptx
 - [The gem5 Memory System](https://www.gem5.org/documentation/general_docs/memory_system/gem5_memory_system/)
+- [[2022 種子教師培訓 (4/5)] Gem5實作流程 (詳細介紹與實作)](https://www.youtube.com/watch?v=W5JXM3wIdcY)

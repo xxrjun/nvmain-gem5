@@ -94,6 +94,8 @@ def config_cache(options, system):
         # Task 4: Modify last level cache policy based on frequency based replacement policy
         if options.l3_replacement_policy == "LFU":
             system.l3.replacement_policy = LFURP()
+        elif options.l3_replacement_policy == "FIFO":
+            system.l3.replacement_policy = FIFORP()
         else:
             system.l3.replacement_policy = LRURP() # default policy
 

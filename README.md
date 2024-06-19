@@ -1,6 +1,7 @@
 # NVMain + Gem5
 
 - [NVMain + Gem5](#nvmain--gem5)
+  - [Usage](#usage)
   - [Grading Policy](#grading-policy)
   - [Task Implementations](#task-implementations)
     - [Task 1: Build GEM5 + NVMain](#task-1-build-gem5--nvmain)
@@ -8,9 +9,46 @@
     - [Task 3: Config last level cache to 2-way and full-way associative cache and test performance](#task-3-config-last-level-cache-to-2-way-and-full-way-associative-cache-and-test-performance)
     - [Task 4: Modify last level cache policy based on frequency based replacement policy](#task-4-modify-last-level-cache-policy-based-on-frequency-based-replacement-policy)
     - [Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc\_pcm](#task-5-test-the-performance-of-write-back-and-write-through-policy-based-on-4-way-associative-cache-with-isscc_pcm)
-  - [Most Important Evaluation Items](#most-important-evaluation-items)
+  - [Evaluation](#evaluation)
     - [Energy Consumption](#energy-consumption)
+    - [The Number of Read/Write Requests](#the-number-of-readwrite-requests)
   - [References](#references)
+
+## Usage
+
+> [!TIP]
+> Make sure you checkout to the `q5-write-through` branch to run the task 5b. which tests the performance of write through policy.
+
+Clone the repository.
+
+```bash
+git clone https://github.com/xxrjun/nvmain-gem5.git
+cd nvmain-gem5
+```
+
+Follow the instructions in [Environment Setup](docs/EnvironmentSetup.md) to build GEM5 + NVMain. Then, run the following scripts to execute the tasks.
+
+```bash
+cd scripts
+
+# Task 1: Build GEM5 + NVMain
+./task1_mix_compile_gem5.sh
+
+# Task 2: Enable L3 last level cache in GEM5 + NVMain
+./task2_hello_with_l3cache.sh
+
+# Task 3: Config last level cache to 2-way and full-way associative cache and test performance
+./task3_quicksort_benchmark.sh
+
+# Task 4: Modify last level cache policy based on frequency based replacement policy
+./task4_quicksort_benchmark_frequency_based_policy.sh
+
+# Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm
+./task5a_multiply_benchmark_writeback.sh
+
+git checkout -b q5-write-through
+./task5b_multiply_benchmark_writethrough.sh
+```
 
 ## Grading Policy
 
@@ -19,8 +57,8 @@
 | GEM5 + NVMAIN BUILD-UP                                                                                      |    40%     | 參照投影片教學                                                                                           |   ✅    |
 | Enable L3 last level cache in GEM5 + NVMAIN                                                                 |    15%     | -                                                                                                        |   ✅    |
 | Config last level cache to 2-way and full-way associative cache and test performance                        |    15%     | 必須跑 benchmark quicksort 在 2-way 跟 full way                                                          |   ✅    |
-| Modify last level cache policy based on frequency based replacement policy                                  |    15%     | -                                                                                                        | ✅ |
-| Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm |    15%     | 必須跑 benchmark multiply 在 write through 跟 write back                                                 | Pending |
+| Modify last level cache policy based on frequency based replacement policy                                  |    15%     | -                                                                                                        |   ✅    |
+| Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm |    15%     | 必須跑 benchmark multiply 在 write through 跟 write back                                                 | ✅ |
 | Bonus                                                                                                       |    10%     | Design last level cache policy to reduce the energy consumption of pcm_based main memory (Baseline: LRU) | Pending |
 
 ## Task Implementations
@@ -198,27 +236,66 @@ In this part, I modified two files
 
 - [gem5/configs/common/Options.py](gem5/configs/common/Options.py)
 
-    ```python
-    parser.add_option("--l3_replacement_policy", type="string", default="LRU")
-    ```
+  ```python
+  parser.add_option("--l3_replacement_policy", type="string", default="LRU")
+  ```
+
 - [gem5/configs/common/CacheConfig.py](gem5/configs/common/CacheConfig.py)
 
-    ```python
-    # Task 4: Modify last level cache policy based on frequency based replacement policy
-    if options.l3_replacement_policy == "LFU":
-        system.l3.replacement_policy = LFURP()
-    else:
-        system.l3.replacement_policy = LRURP() # default policy
-    ```
+  ```python
+  # Task 4: Modify last level cache policy based on frequency based replacement policy
+  if options.l3_replacement_policy == "LFU":
+      system.l3.replacement_policy = LFURP()
+  else:
+      system.l3.replacement_policy = LRURP() # default policy
+  ```
 
 ### Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm
 
 > Run benchmark multiply in write through and write back policy. (In GEM5, the default policy is write back, we can judge the policy by the number of write requests.)
 
-> [!TIP]
-> [`gem5/src/mem/cache/base.cc`](gem5/src/mem/cache/base.cc) and [`gem5/src/mem/cache/cache.cc`](gem5/src/mem/cache/cache.cc) are the files that define the cache policy. We can check the number of *total requests* and *write requests* to determine the policy.
+> [!TIP] 
+> [`gem5/src/mem/cache/base.cc`](gem5/src/mem/cache/base.cc) and [`gem5/src/mem/cache/cache.cc`](gem5/src/mem/cache/cache.cc) are the files that define the cache policy. We can check the number of _total requests_ and _write requests_ to determine the policy.
 
-## Most Important Evaluation Items
+```cpp
+// ...
+} else if (blk && (pkt->needsWritable() ? blk->isWritable() :
+                    blk->isReadable())) {
+    // OK to satisfy access
+    incHitCount(pkt);
+    satisfyRequest(pkt, blk);
+    maintainClusivity(pkt->fromCache(), blk);
+
+    // Add this part to the code
+    // Write back the block if it is dirty when we are doing a normal read/write request
+    // This has the same effect as write through policy
+    if (blk->isWritable()) {
+        PacketPtr writeclean_pkt = writecleanBlk(blk, pkt->req->getDest(), pkt->id);
+        writebacks.push_back(writeclean_pkt);
+    }
+
+    return true;
+}
+
+// ...
+```
+
+#### Write Back
+
+- Write Request -> If hit, write to cache block
+- When a dirty block is evicted, write back to memory.
+- Note that in this policy, read misses would cause write backs.
+
+#### Write Through
+
+- Write Request -> If hit, write to cache block
+
+## Evaluation
+
+> [!TIP]
+> You can use [utils/extract.py](utils/extract_stats.py) to get an integrated [out/output_stats.csv](out/output_stats.csv).
+
+The following metrics are extracted from the `stats.txt` and `log.txt` files.
 
 - `sim_seconds`
 - `sim_ticks`
@@ -231,8 +308,20 @@ In this part, I modified two files
 - `system.mem_ctrls.pwrStateResidencyTicks::UNDEFINED`
 - `system.pwrStateResidencyTicks::UNDEFINED`
 
+Above are in `stats.txt`. Below are in `log.txt`.
+
+### The Number of Read/Write Requests
+
+- `i0.defaultMemory.totalReadRequests`
+- `i0.defaultMemory.totalWriteRequests`
+
 ## References
 
 - Final project_Ch.pptx
 - [The gem5 Memory System](https://www.gem5.org/documentation/general_docs/memory_system/gem5_memory_system/)
-- [[2022 種子教師培訓 (4/5)] Gem5實作流程 (詳細介紹與實作)](https://www.youtube.com/watch?v=W5JXM3wIdcY)
+- [[2022 種子教師培訓 (4/5)] Gem5 實作流程 (詳細介紹與實作)](https://www.youtube.com/watch?v=W5JXM3wIdcY)
+- MSHR
+    - [Miss Status Holding Registers(MSHR)](https://miaochenlu.github.io/2020/10/29/MSHR/)
+- Crossbar
+    - [Interconnection Network](https://www.gem5.org/documentation/general_docs/ruby/interconnection-network/)
+    - [Classic Caches](https://www.gem5.org/documentation/general_docs/memory_system/classic_caches/)

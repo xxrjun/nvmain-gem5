@@ -30,15 +30,15 @@ cmd="./build/X86/gem5.opt $CONFIG_SCRIPT \
         --mem-type=$MEM_TYPE \
         --nvmain-config=$NVMAIN_CONFIG
     "
-mkdir -p ../out/multiply-4-way-writebacks
-eval $cmd > ../out/multiply-4-way-writebacks/log.txt
+mkdir -p ../out/multiply-4-way-writeback
+eval $cmd > ../out/multiply-4-way-writeback/log.txt
 # Store 2-way commands, config, and stats
-echo $cmd > ../out/multiply-4-way-writebacks/cmd.txt
-mv m5out/stats.txt ../out/multiply-4-way-writebacks/stats.txt
-mv m5out/config.ini ../out/multiply-4-way-writebacks/config.ini
+echo $cmd > ../out/multiply-4-way-writeback/cmd.txt
+mv m5out/stats.txt ../out/multiply-4-way-writeback/stats.txt
+mv m5out/config.ini ../out/multiply-4-way-writeback/config.ini
 
 
 # ==============================================================
 echo "Results for 4-way associative cache:"
-grep -e "sim_seconds" -e "sim_ticks" -e "system.l3.overall_hits::total" -e "system.l3.overall_misses::total" -e "system.l3.overall_miss_rate::total" ../out/multiply-4-way-writebacks/stats.txt
+grep -e "sim_seconds" -e "sim_ticks" -e "system.l3.overall_hits::total" -e "system.l3.overall_misses::total" -e "system.l3.overall_miss_rate::total" ../out/multiply-4-way-writeback/stats.txt
 

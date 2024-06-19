@@ -1,6 +1,7 @@
 # NVMain + Gem5
 
 - [NVMain + Gem5](#nvmain--gem5)
+  - [Usage](#usage)
   - [Grading Policy](#grading-policy)
   - [Task Implementations](#task-implementations)
     - [Task 1: Build GEM5 + NVMain](#task-1-build-gem5--nvmain)
@@ -12,6 +13,42 @@
     - [Energy Consumption](#energy-consumption)
     - [The Number of Read/Write Requests](#the-number-of-readwrite-requests)
   - [References](#references)
+
+## Usage
+
+> [!TIP]
+> Make sure you checkout to the `q5-write-through` branch to run the task 5b. which tests the performance of write through policy.
+
+Clone the repository.
+
+```bash
+git clone https://github.com/xxrjun/nvmain-gem5.git
+cd nvmain-gem5
+```
+
+Follow the instructions in [Environment Setup](docs/EnvironmentSetup.md) to build GEM5 + NVMain. Then, run the following scripts to execute the tasks.
+
+```bash
+cd scripts
+
+# Task 1: Build GEM5 + NVMain
+./task1_mix_compile_gem5.sh
+
+# Task 2: Enable L3 last level cache in GEM5 + NVMain
+./task2_hello_with_l3cache.sh
+
+# Task 3: Config last level cache to 2-way and full-way associative cache and test performance
+./task3_quicksort_benchmark.sh
+
+# Task 4: Modify last level cache policy based on frequency based replacement policy
+./task4_quicksort_benchmark_frequency_based_policy.sh
+
+# Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc_pcm
+./task5a_multiply_benchmark_writeback.sh
+
+git checkout -b q5-write-through
+./task5b_multiply_benchmark_writethrough.sh
+```
 
 ## Grading Policy
 

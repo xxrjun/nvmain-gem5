@@ -8,6 +8,8 @@
     - [Task 3: Config last level cache to 2-way and full-way associative cache and test performance](#task-3-config-last-level-cache-to-2-way-and-full-way-associative-cache-and-test-performance)
     - [Task 4: Modify last level cache policy based on frequency based replacement policy](#task-4-modify-last-level-cache-policy-based-on-frequency-based-replacement-policy)
     - [Task 5: Test the performance of write back and write through policy based on 4-way associative cache with isscc\_pcm](#task-5-test-the-performance-of-write-back-and-write-through-policy-based-on-4-way-associative-cache-with-isscc_pcm)
+  - [Most Important Evaluation Items](#most-important-evaluation-items)
+    - [Energy Consumption](#energy-consumption)
   - [References](#references)
 
 ## Grading Policy
@@ -213,7 +215,21 @@ In this part, I modified two files
 
 > Run benchmark multiply in write through and write back policy. (In GEM5, the default policy is write back, we can judge the policy by the number of write requests.)
 
-> [`gem5/src/mem/cache/base.cc`](gem5/src/mem/cache/base.cc) and [`gem5/src/mem/cache/cache.cc`](gem5/src/mem/cache/cache.cc) are the files that define the cache policy.
+> [!TIP]
+> [`gem5/src/mem/cache/base.cc`](gem5/src/mem/cache/base.cc) and [`gem5/src/mem/cache/cache.cc`](gem5/src/mem/cache/cache.cc) are the files that define the cache policy. We can check the number of *total requests* and *write requests* to determine the policy.
+
+## Most Important Evaluation Items
+
+- `sim_seconds`
+- `sim_ticks`
+- `system.l3.overall_hits::total`
+- `system.l3.overall_misses::total`
+- `system.l3.overall_miss_rate::total`
+
+### Energy Consumption
+
+- `system.mem_ctrls.pwrStateResidencyTicks::UNDEFINED`
+- `system.pwrStateResidencyTicks::UNDEFINED`
 
 ## References
 

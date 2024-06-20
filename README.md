@@ -267,7 +267,7 @@ In this part, I modified two files
     maintainClusivity(pkt->fromCache(), blk);
 
     // Add this part to the code
-    // Write back the block if it is dirty when we are doing a normal read/write request
+    // Write back the block if it is writable when we are doing a normal read/write request
     // This has the same effect as write through policy
     if (blk->isWritable()) {
         PacketPtr writeclean_pkt = writecleanBlk(blk, pkt->req->getDest(), pkt->id);
